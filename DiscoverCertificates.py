@@ -1,6 +1,7 @@
 # Imports
 import io
 import os
+from shutil import copyfile
 from tkinter import *
 import time
 import ssl
@@ -15,6 +16,8 @@ import fire
 root = "\\"
 
 # Path of folder where it's save the certificates
+file_path_certificatesFirst = "./CertificatesToImport"
+file_path_detailsFirst = "./CertificatesToImport/Details"
 file_path_certificates = "./CertificatesToImport"
 file_path_details = "./CertificatesToImport/Details"
 
@@ -115,13 +118,15 @@ def listSharedFolders(serverName):
 
 
 # Function to return the date and time actual
-def createFolders():
+def createFolders(reqID):
+    file_path_certificates = file_path_certificatesFirst + "/" + reqID
+    file_path_details = file_path_detailsFirst + "/" + reqID
     try:
         os.stat(file_path_certificates)
         os.stat(file_path_details)
     except:
-        os.mkdir(file_path_certificates)
-        os.mkdir(file_path_details)
+        os.makedirs(file_path_certificates)
+        os.makedirs(file_path_details)
 
 
 # Function to return actual date and time
@@ -591,10 +596,20 @@ def listCertificatesMultipleNetworksSharedFolders(networks):
                     print("FileNotFoundError, Host unavailable: " + ipTotal)
                 except PermissionError:
                     print("Folder *" + val + "* without access")
+def runnig():
+    pid = str(os.getpid())
+    print(pid)
+    pidfile = file_path_certificates + "/mydaemon.pid"
 
+    if os.path.isfile(pidfile):
+        print("%s already exists, exiting" % pidfile)
+        sys.exit()
+        file(pidfile, 'w').write(pid)
 
 # Program starts, as code is run
 if __name__ == '__main__':
-    createFolders()
-    fire.Fire()
-# PROGRAM FINISHES
+    createFolders("2")
+    runnig()
+    #Fire to bluex
+    #fire.Fire()
+    # PROGRAM FINISHES
